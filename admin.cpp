@@ -770,35 +770,219 @@ public:
     }
 };
 
+struct CauHoi {
+    int id;
+    string noiDung;
+    string dapAn[4];
+    int dapAnDung; 
+};
+
+struct KetQua {
+    int idSV;
+    string tenSV;
+    float diem;
+    int thoiGian; 
+};
+
+
+// LOP QUAN LY THI 
+
+class QuanLyThi {
+private:
+    int maDe;
+    string tenMon;
+    int thoiGianLamBai;
+    vector<CauHoi> danhSachCauHoi;
+    vector<KetQua> danhSachKetQua;
+
+public:
+    QuanLyThi() {
+        maDe = 0;
+        tenMon = "Chua dat ten";
+        thoiGianLamBai = 0;
+    }
+
+   
+    int nhapSoNguyen(string thongBao) {
+        int n;
+        cout << thongBao;
+        while (!(cin >> n)) {
+            cout << "Loi! Vui long nhap lai so: ";
+            cin.clear();
+            cin.ignore(1000, '\n');
+        }
+        cin.ignore(); 
+        return n;
+    }
+
+    void thietLapDeThi() {
+        cout << "\n--- CAI DAT THONG TIN DE THI ---\n";
+        maDe = nhapSoNguyen("Nhap ma de thi: ");
+        cout << "Nhap ten mon hoc: ";
+        getline(cin, tenMon);
+        thoiGianLamBai = nhapSoNguyen("Nhap thoi gian lam bai (phut): ");
+        cout << "=> Da thiet lap xong!\n";
+    }
+
+    void themCauHoi() {
+        CauHoi ch;
+        ch.id = nhapSoNguyen("Nhap ID cau hoi: ");
+        cout << "Nhap noi dung cau hoi: ";
+        getline(cin, ch.noiDung);
+        
+        for (int i = 0; i < 4; i++) {
+            cout << "Nhap lua chon " << i + 1 << ": ";
+            getline(cin, ch.dapAn[i]);
+        }
+        
+        do {
+            ch.dapAnDung = nhapSoNguyen("Dap an dung (1-4): ");
+        } while (ch.dapAnDung < 1 || ch.dapAnDung > 4);
+
+        danhSachCauHoi.push_back(ch);
+        cout << "=> Them thanh cong.\n";
+    }
+
+    void xoaCauHoi() {
+        int idXoa = nhapSoNguyen("Nhap ID cau hoi can xoa: ");
+        bool timThay = false;
+        for (int i = 0; i < danhSachCauHoi.size(); i++) {
+            if (danhSachCauHoi[i].id == idXoa) {
+                danhSachCauHoi.erase(danhSachCauHoi.begin() + i);
+                timThay = true;
+                cout << "=> Da xoa cau hoi.\n";
+                break;
+            }
+        }
+        if (!timThay) cout << "Khong tim thay ID nay!\n";
+    }
+
+    void hienThiCauHoi() {
+        cout << "\n--- NGAN HANG CAU HOI CUA MON: " << tenMon << " ---\n";
+        if (danhSachCauHoi.empty()) {
+            cout << "Chua co cau hoi nao trong danh sach.\n";
+            return;
+        }
+        for (int i = 0; i < danhSachCauHoi.size(); i++) {
+            cout << "Cau " << danhSachCauHoi[i].id << ": " << danhSachCauHoi[i].noiDung << endl;
+            for (int j = 0; j < 4; j++) {
+                cout << "  " << j + 1 << ". " << danhSachCauHoi[i].dapAn[j] << endl;
+            }
+            cout << "  => Dap an dung: " << danhSachCauHoi[i].dapAnDung << endl;
+            cout << "------------------------\n";
+        }
+    }
+
+    void batDauThi() {
+        if (thoiGianLamBai <= 0) {
+            cout << "Chua cai dat thoi gian thi!\n";
+            return;
+        }
+        cout << "\n--- DANG TRONG CHE DO THI (MO PHONG) ---\n";
+        for (int i = 1; i <= thoiGianLamBai; i++) {
+            cout << "Phut thu: " << i << "/" << thoiGianLamBai << " ... \r";
+            
+        }
+        cout << "\n=> HET GIO! Moi tat ca sinh vien dung but.\n";
+    }
+
+    void nhapKetQua() {
+        KetQua kq;
+        kq.idSV = nhapSoNguyen("Nhap ID sinh vien: ");
+        cout << "Nhap ho ten sinh vien: ";
+        getline(cin, kq.tenSV);
+        cout << "Nhap diem so dat duoc: ";
+        cin >> kq.diem;
+        kq.thoiGian = nhapSoNguyen("Nhap thoi gian sinh vien nay lam (phut): ");
+        
+        danhSachKetQua.push_back(kq);
+        cout << "=> Luu ket qua thanh cong.\n";
+    }
+
+    void hienThiXepHang() {
+        
+        for (int i = 0; i < (int)danhSachKetQua.size() - 1; i++) {
+            for (int j = i + 1; j < danhSachKetQua.size(); j++) {
+                if (danhSachKetQua[i].diem < danhSachKetQua[j].diem) {
+                    swap(danhSachKetQua[i], danhSachKetQua[j]);
+                }
+            }
+        }
+
+        cout << "\n--- BANG XEP HANG KET QUA --- \n";
+        if (danhSachKetQua.empty()) {
+            cout << "Chua co sinh vien nao thi.\n";
+            return;
+        }
+        for (int i = 0; i < danhSachKetQua.size(); i++) {
+            cout << "Top " << i + 1 << ": " << danhSachKetQua[i].tenSV 
+                 << " | Diem: " << danhSachKetQua[i].diem 
+                 << " | TG: " << danhSachKetQua[i].thoiGian << "p" << endl;
+        }
+    }
+
+    void menuChinh() {
+        int luaChon;
+        do {
+            cout << "\n====================================";
+            cout << "\n     HE THONG QUAN LY THI CU";
+            cout << "\n====================================";
+            cout << "\n1. Cai dat thong tin de thi";
+            cout << "\n2. Them cau hoi moi";
+            cout << "\n3. Xoa cau hoi theo ID";
+            cout << "\n4. Xem danh sach cau hoi";
+            cout << "\n5. To chuc thi (Dem phut)";
+            cout << "\n6. Nhap diem cho sinh vien";
+            cout << "\n7. Xem bang xep hang diem";
+            cout << "\n0. Thoat chuong trinh";
+            luaChon = nhapSoNguyen("\nBan muon lam gi? Chon: ");
+
+            switch (luaChon) {
+                case 1: thietLapDeThi(); break;
+                case 2: themCauHoi(); break;
+                case 3: xoaCauHoi(); break;
+                case 4: hienThiCauHoi(); break;
+                case 5: batDauThi(); break;
+                case 6: nhapKetQua(); break;
+                case 7: hienThiXepHang(); break;
+                case 0: cout << "\nDang thoat module... Tam biet!\n"; break;
+                default: cout << "\nLua chon khong co, vui long chon lai!\n";
+            }
+        } while (luaChon != 0);
+    }
+};
+
+
 // ========================== MAIN ==========================
 int main() {
     AdminSystem system;
+    QuanLyThi myApp;
 
-    cout << "Ban co muon tai du lieu tu file khong?\n";
-    cout << "1. Co\n";
-    cout << "2. Khong\n";
-
+    cout << "Ban co muon tai du lieu tu file khong? (1. Co / 2. Khong): ";
     int preloadChoice;
-    while (true) {
-        cout << "Chon: ";
-        cin >> preloadChoice;
-        if (!cin.fail() && (preloadChoice == 1 || preloadChoice == 2)) {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            break;
+    cin >> preloadChoice;
+    cin.ignore();
+    if (preloadChoice == 1) system.loadData();
+
+    int vaiTro;
+    do {
+        cout << "\n========== HE THONG QUAN LY TRUONG HOC ==========\n";
+        cout << "1. Quyen Admin (Quan ly he thong)\n";
+        cout << "2. Quyen Giao vien (Quan ly thi)\n";
+        cout << "0. Thoat hoan toan\n";
+        cout << "Chon vai tro: ";
+        cin >> vaiTro;
+        cin.ignore();
+
+        if (vaiTro == 1) {
+            if (system.loginAdmin()) {
+                system.adminMenu();
+            }
+        } 
+        else if (vaiTro == 2) {
+            myApp.menuChinh();
         }
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Lua chon khong hop le.\n";
-    }
+    } while (vaiTro != 0);
 
-    if (preloadChoice == 1) {
-        system.loadData();
-    }
-
-    if (!system.loginAdmin()) {
-        return 0;
-    }
-
-    system.adminMenu();
     return 0;
 }
